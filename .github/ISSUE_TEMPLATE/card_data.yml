@@ -3,7 +3,7 @@ description: File a report for card data issues (images, text, links, etc).
 title: "[Card Data] - "
 labels: [card data, good first issue, help wanted]
 assignees:
-  - ledergamesmatt
+  - mattdmartens
 body:
   - type: checkboxes
     attributes:
