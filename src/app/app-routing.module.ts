@@ -8,7 +8,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./home/home.module').then((m) => m.HomePageModule),
     data: {
-      title: 'Leder Card Library',
+      title: 'Buried Giant Studios Card Library',
     },
   },
   {
@@ -16,7 +16,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./advanced/advanced.module').then((m) => m.AdvancedPageModule),
     data: {
-      title: 'Leder Card Library - Advanced Search',
+      title: 'Buried Giant Studios Card Library - Advanced Search',
       description: 'Craft a custom search query to find the cards you need.',
     },
   },
@@ -25,7 +25,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./search/search.module').then((m) => m.SearchPageModule),
     data: {
-      title: 'Leder Card Library - Card Search',
+      title: 'Buried Giant Studios Card Library - Card Search',
       description: 'View card search results.',
       noindex: true,
     },
@@ -43,7 +43,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./syntax/syntax.module').then((m) => m.SyntaxPageModule),
     data: {
-      title: 'Leder Card Library - Search Help',
+      title: 'Buried Giant Studios Card Library - Search Help',
       description: 'Get help with the search operators and syntax.',
     },
   },
@@ -52,7 +52,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./sets/sets.module').then((m) => m.SetsPageModule),
     data: {
-      title: 'Leder Card Library - Product List',
+      title: 'Buried Giant Studios Card Library - Product List',
       description: 'View all products in the card library catalog.',
     },
   },
@@ -60,7 +60,7 @@ const routes: Routes = [
     path: 'faq',
     loadChildren: () => import('./faq/faq.module').then((m) => m.FaqPageModule),
     data: {
-      title: 'Leder Card Library - FAQs',
+      title: 'Buried Giant Studios Card Library - FAQs',
       description:
         'View a list of frequently asked questions on a per-product basis.',
     },
@@ -70,7 +70,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./errata/errata.module').then((m) => m.ErrataPageModule),
     data: {
-      title: 'Leder Card Library - Errata',
+      title: 'Buried Giant Studios Card Library - Errata',
       description: 'View a list of errata on a per-product basis.',
     },
   },
@@ -79,7 +79,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./changelog/changelog.module').then((m) => m.ChangelogPageModule),
     data: {
-      title: 'Leder Card Library - Changelogs',
+      title: 'Buried Giant Studios Card Library - Changelogs',
       description: 'View a list of changelogs on a per-product basis.',
     },
   },

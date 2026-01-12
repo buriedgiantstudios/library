@@ -185,7 +185,7 @@ export class CardPage implements OnInit, OnDestroy {
       } errata associated with it.`
     );
 
-    this.seo.updatePageTitle(`Leder Card Library - ${cardData.name}`);
+    this.seo.updatePageTitle(`Buried Giant Studios Card Library - ${cardData.name}`);
 
     const ldData = this.document.createElement('script');
     ldData.id = 'card-metadata';

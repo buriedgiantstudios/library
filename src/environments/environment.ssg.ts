@@ -9,8 +9,8 @@ import * as meta from '../../ssgdata/meta.json';
 export const environment = {
   production: true,
   ssg: true,
-  baseAppUrl: 'https://cards.ledergames.com',
-  baseUrl: 'https://ledercardcdn.seiyria.com',
+  baseAppUrl: 'https://cards.buriedgiantstudios.com',
+  baseUrl: 'https://cardcdn.buriedgiantstudios.com',
   overrideData: {
     cardsMin: (cardsMin as any).default ?? cardsMin,
     changelog: (changelog as any).default ?? changelog,

@@ -23,7 +23,7 @@ root.att('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
 
 routes.forEach((route) => {
   const url = root.ele('url');
-  url.ele('loc', `https://cards.ledergames.com${route}`);
+  url.ele('loc', `https://cards.buriedgiantstudios.com${route}`);
 });
 
 fs.writeFileSync('src/sitemap.xml', root.end({ pretty: true }));
