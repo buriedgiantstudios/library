@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal, type WritableSignal } from '@angular/core';
 import { sortBy } from 'lodash';
-import { of } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import type { ICard, ICardFAQ, ICardFAQEntry } from '../../interfaces';
 import { environment } from '../environments/environment';
 import { LocaleService } from './locale.service';
@@ -32,6 +32,20 @@ export class FAQService {
       return of(true);
     }
 
+    if (environment.localCDNUrl) {
+      const obs = this.http
+        .get(`${environment.localCDNUrl}/faq.json`)
+        .pipe(
+          catchError(() => this.http.get(`${environment.baseUrl}/faq.json`)),
+        );
+
+      obs.subscribe((realData) => {
+        finishLoad(realData);
+      });
+
+      return obs;
+    }
+
     const obs = this.http.get(`${environment.baseUrl}/faq.json`);
 
     obs.subscribe((realData) => {
@@ -51,7 +65,7 @@ export class FAQService {
       Object.keys(faqData[productId]).forEach((locale) => {
         baseFAQs[productId][locale] = sortBy(
           faqData[productId][locale],
-          (cardFAQ) => cardFAQ.cardDisplay || cardFAQ.card
+          (cardFAQ) => cardFAQ.cardDisplay || cardFAQ.card,
         );
 
         faqData[productId][locale].forEach((cardFAQ) => {
@@ -87,7 +101,7 @@ export class FAQService {
 
   public getProductFAQ(
     productId: string,
-    locale: string
+    locale: string,
   ): ICardFAQ[] | undefined {
     const faq = this.faqByProductIdAndLocale();
     return faq?.[productId]?.[locale];

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal, type WritableSignal } from '@angular/core';
 import { sortBy } from 'lodash';
-import { of } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import type { IChangelogEntry } from '../../interfaces';
 import { environment } from '../environments/environment';
 import { LocaleService } from './locale.service';
@@ -28,6 +28,22 @@ export class ChangelogService {
       return of(true);
     }
 
+    if (environment.localCDNUrl) {
+      const obs = this.http
+        .get(`${environment.localCDNUrl}/changelog.json`)
+        .pipe(
+          catchError(() =>
+            this.http.get(`${environment.baseUrl}/changelog.json`),
+          ),
+        );
+
+      obs.subscribe((realData) => {
+        finishLoad(realData);
+      });
+
+      return obs;
+    }
+
     const obs = this.http.get(`${environment.baseUrl}/changelog.json`);
 
     obs.subscribe((realData) => {
@@ -38,7 +54,7 @@ export class ChangelogService {
   }
 
   private parseChangelogs(
-    faqData: Record<string, Record<string, IChangelogEntry[]>>
+    faqData: Record<string, Record<string, IChangelogEntry[]>>,
   ) {
     const baseChangelogs = this.changelogByProductIdAndLocale();
 
@@ -48,7 +64,7 @@ export class ChangelogService {
       Object.keys(faqData[productId]).forEach((locale) => {
         baseChangelogs[productId][locale] = sortBy(
           faqData[productId][locale],
-          'date'
+          'date',
         );
       });
     });
@@ -76,7 +92,7 @@ export class ChangelogService {
 
   public getProductChangelog(
     productId: string,
-    locale: string
+    locale: string,
   ): IChangelogEntry[] | undefined {
     const changelog = this.changelogByProductIdAndLocale();
     return changelog?.[productId]?.[locale].reverse();

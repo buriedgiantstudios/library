@@ -1,8 +1,15 @@
-import { computed, inject, Injectable, signal, type Signal, type WritableSignal } from '@angular/core';
+import {
+  computed,
+  inject,
+  Injectable,
+  signal,
+  type Signal,
+  type WritableSignal,
+} from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
 import { get } from 'lodash';
-import { of } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import type { IProduct, IProductFilter } from '../../interfaces';
 import { environment } from '../environments/environment';
 import { LocaleService } from './locale.service';
@@ -15,29 +22,37 @@ export class MetaService {
   private localeService = inject(LocaleService);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private siteConfig: WritableSignal<Record<string, string | undefined>> = signal({});
+  private siteConfig: WritableSignal<Record<string, string | undefined>> =
+    signal({});
 
   private allProducts: WritableSignal<IProduct[]> = signal([]);
-  private groupByProductId<T>(getField: (product: IProduct) => T): Record<string, T> {
-    return Object.fromEntries(this.allProducts().map(product => [product.id, getField(product)]))
+  private groupByProductId<T>(
+    getField: (product: IProduct) => T,
+  ): Record<string, T> {
+    return Object.fromEntries(
+      this.allProducts().map((product) => [product.id, getField(product)]),
+    );
   }
 
   private productNamesByProductId: Signal<Record<string, string>> = computed(
     () => ({
-      ...this.groupByProductId(product => product.name),
-      ...Object.fromEntries(this.allProducts().flatMap(product => product.subproducts.map(sub => [sub.id, sub.name]))),
-    })
+      ...this.groupByProductId((product) => product.name),
+      ...Object.fromEntries(
+        this.allProducts().flatMap((product) =>
+          product.subproducts.map((sub) => [sub.id, sub.name]),
+        ),
+      ),
+    }),
   );
-  private templatesByProductId: Signal<Record<string, Record<string, string>>> = computed(
-    () => this.groupByProductId(product => product.cardTemplate)
+  private templatesByProductId: Signal<Record<string, Record<string, string>>> =
+    computed(() => this.groupByProductId((product) => product.cardTemplate));
+  private rulesByProductId: Signal<Record<string, string>> = computed(() =>
+    this.groupByProductId((product) => product.external?.rules ?? ''),
   );
-  private rulesByProductId: Signal<Record<string, string>> = computed(
-    () => this.groupByProductId(product => product.external?.rules ?? '')
-  );
-  private filtersByProductId: Signal<Record<string, IProductFilter[]>> = computed(
-    () => this.groupByProductId(product => product.filters)
-  );
-  private faqByProductId: Signal<Record<string, Record<string, string>>> = computed(() => ({}));
+  private filtersByProductId: Signal<Record<string, IProductFilter[]>> =
+    computed(() => this.groupByProductId((product) => product.filters));
+  private faqByProductId: Signal<Record<string, Record<string, string>>> =
+    computed(() => ({}));
 
   public get products() {
     return this.allProducts();
@@ -56,6 +71,20 @@ export class MetaService {
       return of(true);
     }
 
+    if (environment.localCDNUrl) {
+      const obs = this.http
+        .get(`${environment.localCDNUrl}/meta.json`)
+        .pipe(
+          catchError(() => this.http.get(`${environment.baseUrl}/meta.json`)),
+        );
+
+      obs.subscribe((realData) => {
+        finishLoad(realData);
+      });
+
+      return obs;
+    }
+
     const obs = this.http.get(`${environment.baseUrl}/meta.json`);
 
     obs.subscribe((realData) => {
@@ -66,11 +95,15 @@ export class MetaService {
   }
 
   public getProductNameByProductId(productId: string): string {
-    return this.productNamesByProductId()[productId] ?? "";
+    return this.productNamesByProductId()[productId] ?? '';
   }
 
   public getTemplateByProductId(productId: string): string {
-    return this.templatesByProductId()[productId]?.[this.localeService.currentLocale()] ?? '';
+    return (
+      this.templatesByProductId()[productId]?.[
+        this.localeService.currentLocale()
+      ] ?? ''
+    );
   }
 
   public getRulesByProductId(productId: string): string {

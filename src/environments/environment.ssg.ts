@@ -11,6 +11,7 @@ export const environment = {
   ssg: true,
   baseAppUrl: 'https://cards.buriedgiantstudios.com',
   baseUrl: 'https://cardcdn.buriedgiantstudios.com',
+  localCDNUrl: '',
   overrideData: {
     cardsMin: (cardsMin as any).default ?? cardsMin,
     changelog: (changelog as any).default ?? changelog,

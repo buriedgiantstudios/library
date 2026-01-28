@@ -56,7 +56,7 @@ export class OmnisearchComponent implements OnDestroy {
 
   public get placeholder(): string {
     const choiceProduct = this.metaService.getProductNameByProductId(
-      this.chosenProduct
+      this.chosenProduct,
     );
 
     const choiceKey = choiceProduct
@@ -85,7 +85,7 @@ export class OmnisearchComponent implements OnDestroy {
         this.initialQuery() ??
         this.searchService.queryString() ??
         reformatQueryToJustHaveProduct(
-          this.storageService.retrieve('search-query')
+          this.storageService.retrieve('search-query'),
         ) ??
         '';
 
@@ -141,7 +141,7 @@ export class OmnisearchComponent implements OnDestroy {
     this.chosenProduct = productName;
 
     this.searchField.value = removeAllButBareTextAndGameFromQuery(
-      this.searchField.value ?? ''
+      this.searchField.value ?? '',
     );
 
     this.changeText(this.searchFieldValue);

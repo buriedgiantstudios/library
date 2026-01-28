@@ -7,6 +7,7 @@ export const environment = {
   ssg: false,
   baseAppUrl: 'https://cards.buriedgiantstudios.com',
   baseUrl: 'https:/cardcdn.buriedgiantstudios.com',
+  localCDNUrl: 'http://localhost:8091',
   overrideData: {
     cardsMin: undefined,
     changelog: undefined,

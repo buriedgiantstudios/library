@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal, type WritableSignal } from '@angular/core';
 import { sortBy } from 'lodash';
-import { of } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import type { ICardErrata, ICardErrataEntry } from '../../interfaces';
 import { environment } from '../environments/environment';
 import { LocaleService } from './locale.service';
@@ -32,6 +32,20 @@ export class ErrataService {
       return of(true);
     }
 
+    if (environment.localCDNUrl) {
+      const obs = this.http
+        .get(`${environment.localCDNUrl}/errata.json`)
+        .pipe(
+          catchError(() => this.http.get(`${environment.baseUrl}/errata.json`)),
+        );
+
+      obs.subscribe((realData) => {
+        finishLoad(realData);
+      });
+
+      return obs;
+    }
+
     const obs = this.http.get(`${environment.baseUrl}/errata.json`);
 
     obs.subscribe((realData) => {
@@ -42,7 +56,7 @@ export class ErrataService {
   }
 
   private parseLocaleErrata(
-    errataData: Record<string, Record<string, ICardErrata[]>>
+    errataData: Record<string, Record<string, ICardErrata[]>>,
   ) {
     const baseErrata = this.errataByProductIdAndLocale();
     const faqByProductLocaleCard = this.errataByProductLocaleCard();
@@ -53,7 +67,7 @@ export class ErrataService {
       Object.keys(errataData[productId]).forEach((locale) => {
         baseErrata[productId][locale] = sortBy(
           errataData[productId][locale],
-          'card'
+          'card',
         );
 
         errataData[productId][locale].forEach((cardErrata) => {
@@ -89,7 +103,7 @@ export class ErrataService {
 
   public getProductErrata(
     productId: string,
-    locale: string
+    locale: string,
   ): ICardErrata[] | undefined {
     const errata = this.errataByProductIdAndLocale();
     return errata?.[productId]?.[locale];
