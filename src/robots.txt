@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cards.buriedgiantstudios.com/sitemap.xml
+Sitemap: https://cards.buriedgiant.com/sitemap.xml
