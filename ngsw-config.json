@@ -15,7 +15,6 @@
         ],
         "urls": [
           "https://fonts.googleapis.com/css2?family=Montserrat&amp;display=swap",
-          "https://cardcdn.buriedgiant.com/cards.min.json",
           "https://cardcdn.buriedgiant.com/meta.json",
           "https://cardcdn.buriedgiant.com/changelog.json",
           "https://cardcdn.buriedgiant.com/faq.json",
@@ -32,6 +31,22 @@
           "/assets/**",
           "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
         ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "card-data",
+      "urls": [
+        "https://cardcdn.buriedgiant.com/cards.min.json?v=*"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 1,
+        "maxAge": "30d",
+        "cacheQueryOptions": {
+          "ignoreSearch": false
+        }
       }
     }
   ]

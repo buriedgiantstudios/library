@@ -11,7 +11,7 @@ import { decompress } from 'compress-json';
 import { sortBy } from 'lodash';
 
 import { HttpClient } from '@angular/common/http';
-import { catchError, of } from 'rxjs';
+import { catchError, of, switchMap, throwError } from 'rxjs';
 import type { ICard, IProductFilter } from '../../interfaces';
 import { numericalOperator } from '../../search/operators/_helpers';
 import { parseQuery, type ParserOperator } from '../../search/search';
@@ -61,13 +61,9 @@ export class CardsService {
     }
 
     if (environment.localCDNUrl) {
-      const obs = this.http
-        .get(`${environment.localCDNUrl}/cards.min.json`)
-        .pipe(
-          catchError(() =>
-            this.http.get(`${environment.baseUrl}/cards.min.json`),
-          ),
-        );
+      const obs = this.getVersionedCards(environment.localCDNUrl).pipe(
+        catchError(() => this.getVersionedCards(environment.baseUrl)),
+      );
 
       obs.subscribe((realData) => {
         finishLoad(realData);
@@ -76,13 +72,27 @@ export class CardsService {
       return obs;
     }
 
-    const obs = this.http.get(`${environment.baseUrl}/cards.min.json`);
+    const obs = this.getVersionedCards(environment.baseUrl);
 
     obs.subscribe((realData) => {
       finishLoad(realData);
     });
 
     return obs;
+  }
+
+  private getVersionedCards(baseUrl: string) {
+    return this.http
+      .get<{ cards?: string }>(`${baseUrl}/version.json?t=${Date.now()}`)
+      .pipe(
+        switchMap((version) =>
+          version.cards
+            ? this.http.get(
+                `${baseUrl}/cards.min.json?v=${encodeURIComponent(version.cards)}`,
+              )
+            : throwError(() => new Error('Card data version is unavailable')),
+        ),
+      );
   }
 
   // card utilities
